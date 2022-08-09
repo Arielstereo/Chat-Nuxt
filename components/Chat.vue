@@ -122,19 +122,8 @@ export default {
 </script>
 
 <style>
-/* When the textarea gets focus, do something */
 .form-container textarea:focus {
   background-color: #ddd;
-  outline: none;
-}
-/* Add a red background color to the cancel button */
-.form-container .cancel {
-  background-color: red;
 }
 
-/* Add some hover effects to buttons */
-.form-container .btn:hover,
-.open-button:hover {
-  opacity: 1;
-}
 </style>

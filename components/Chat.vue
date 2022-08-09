@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-col">
     <div class="flex w-full">
-      <div class="container mx-auto">
+      <div
+        class="container mx-auto">
         <h1 class="text-center bg-slate-200 p-4 rounded-xl m-4 shadow-md">
           Linn Ronning
         </h1>
@@ -15,6 +16,8 @@
             p-2
             text-blue-50
           "
+           v-for="message in messages"
+        :key="message.id"
         >
           <div class="flex flex-row-reverse md:contents">
             <div
@@ -27,12 +30,13 @@
                 mr-32
                 shadow-md
               "
-              v-for="message in messages"
-              :key="message.id"
             >
-              <h3 class="font-semibold text-lg mb-1">Lorem ipsum</h3>
-              <p class="leading-tight text-justify">
-                {{ message.messages }}
+               <div class="flex justify-between">
+               <h3 class="font-semibold text-lg mb-1">contact/user</h3>
+              <span> {{ message.messages[0].time }}</span>
+             </div>
+              <p class="leading-tight text-justify text-white">
+                {{ message.messages[0].text }}
               </p>
             </div>
           </div>
@@ -49,30 +53,13 @@
                 shadow-md
               "
             >
-              <h3 class="font-semibold text-lg mb-1">Lorem ipsum</h3>
+             <div class="flex justify-between">
+               <h3 class="font-semibold text-lg mb-1">contact/user</h3>
+              <span> {{ message.messages[1].time }}</span>
+             </div>
               <p class="leading-tight text-justify">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi,
-                quaerat?
-              </p>
-            </div>
-          </div>
-
-          <div class="flex flex-row-reverse md:contents">
-            <div
-              class="
-                bg-blue-500
-                col-start-1 col-end-5
-                p-4
-                rounded-xl
-                my-4
-                mr-32
-                shadow-md
-              "
-            >
-              <h3 class="font-semibold text-lg mb-1">Lorem ipsum</h3>
-              <p class="leading-tight text-justify">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi,
-                quaerat?
+                {{ message.messages[1].text }}
+               
               </p>
             </div>
           </div>
@@ -125,5 +112,4 @@ export default {
 .form-container textarea:focus {
   background-color: #ddd;
 }
-
 </style>

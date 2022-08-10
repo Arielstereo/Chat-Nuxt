@@ -62,16 +62,35 @@
       >
         <div class="px-4 py-5 flex-auto">
           <div class="tab-content tab-space">
+            <div>
+              <form class="flex items-center">
+                <input
+                  type="text"
+                  class="
+                    h-5
+                    w-full
+                    mx-2
+                    my-4
+                    p-6
+                    rounded-3xl
+                    border-2
+                    focus:bg-gray-100
+                  "
+                  placeholder="Search.."
+                  v-model="search"
+                />
+              </form>
+            </div>
             <div v-bind:class="{ hidden: openTab !== 1, block: openTab === 1 }">
               <p>messages</p>
             </div>
             <div
               class="mx-2"
               v-bind:class="{ hidden: openTab !== 2, block: openTab === 2 }"
-              v-for="contact in contacts"
+              v-for="contact in searchContact"
               :key="contact.id"
             >
-              <p class="py-2">{{ contact.title }}</p>
+              <p class="px-6 py-2">{{ contact.title }}</p>
             </div>
           </div>
         </div>
@@ -92,19 +111,27 @@ export default {
       openTab: 1,
       contacts: [],
       messages: [],
+      search: "",
     };
   },
   methods: {
-    toggleTabs: function (tabNumber) {
+    toggleTabs(tabNumber) {
       this.openTab = tabNumber;
     },
   },
-   async mounted() {
+  computed: {
+    searchContact: function() {
+      return this.contacts.filter((contact) => {
+        return contact.title.toUpperCase().toLowerCase().match(this.search);
+      });
+    },
+  },
+  async mounted() {
     await axios.get(apiContacts).then((response) => {
       this.contacts = response.data.data;
     });
-     await axios.get(apiConversations).then((response) => {
-      console.log(response.data)
+    await axios.get(apiConversations).then((response) => {
+      console.log(response.data);
       this.messages = response.data;
     });
   },

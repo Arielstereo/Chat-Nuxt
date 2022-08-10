@@ -69,10 +69,10 @@
     </div>
 
     <div>
-      <div class="px-8">
+      <div class="mt-16 px-8">
         <form class="flex items-center">
           <input
-            class="w-3/4 h-14 m-8 p-6 rounded-3xl border-2"
+            class="w-3/4 h-14 m-8 p-6 rounded-3xl border-2 focus:bg-gray-100"
             placeholder="Say something.."
           />
 
@@ -107,9 +107,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.form-container textarea:focus {
-  background-color: #ddd;
-}
-</style>

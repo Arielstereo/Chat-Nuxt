@@ -14,11 +14,12 @@
               rounded
               block
               leading-normal
+              cursor-pointer
             "
             v-on:click="toggleTabs(1)"
             v-bind:class="{
-              'text-pink-600 bg-white': openTab !== 1,
-              'text-white bg-pink-600': openTab === 1,
+              'text-blue-600 bg-white': openTab !== 1,
+              'text-white bg-blue-600': openTab === 1,
             }"
           >
             Messages
@@ -36,11 +37,12 @@
               rounded
               block
               leading-normal
+              cursor-pointer
             "
             v-on:click="toggleTabs(2)"
             v-bind:class="{
-              'text-pink-600 bg-white': openTab !== 2,
-              'text-white bg-pink-600': openTab === 2,
+              'text-blue-600 bg-white': openTab !== 2,
+              'text-white bg-blue-600': openTab === 2,
             }"
           >
             Contacts
@@ -62,35 +64,42 @@
       >
         <div class="px-4 py-5 flex-auto">
           <div class="tab-content tab-space">
-            <div>
-              <form class="flex items-center">
-                <input
-                  type="text"
-                  class="
-                    h-5
-                    w-full
-                    mx-2
-                    my-4
-                    p-6
-                    rounded-3xl
-                    border-2
-                    focus:bg-gray-100
-                  "
-                  placeholder="Search.."
-                  v-model="search"
-                />
-              </form>
-            </div>
             <div v-bind:class="{ hidden: openTab !== 1, block: openTab === 1 }">
               <p>messages</p>
             </div>
             <div
               class="mx-2"
               v-bind:class="{ hidden: openTab !== 2, block: openTab === 2 }"
-              v-for="contact in searchContact"
-              :key="contact.id"
             >
-              <p class="px-6 py-2">{{ contact.title }}</p>
+              <div>
+                <form class="flex items-center">
+                  <input
+                    type="text"
+                    class="
+                      h-5
+                      w-full
+                      mx-2
+                      my-4
+                      p-6
+                      rounded-3xl
+                      border-2
+                      focus:bg-gray-100
+                    "
+                    placeholder="Search.."
+                    v-model="search"
+                  />
+                </form>
+              </div>
+
+              <div
+                class="flex gap-4"
+                v-for="(contact, index) in contacts"
+                :key="index">
+                <i class="bx bxs-user-circle bx-md" style="color: #1386d2"></i>
+                <a class="cursor-pointer" @click="handleContact(contact)">{{
+                  contact.title
+                }}</a>
+              </div>
             </div>
           </div>
         </div>
@@ -100,17 +109,11 @@
 </template>
 
 <script>
-import axios from "axios";
-
-const apiContacts = process.env.apiContacts;
-const apiConversations = process.env.apiConversations;
 
 export default {
   data() {
     return {
       openTab: 1,
-      contacts: [],
-      messages: [],
       search: "",
     };
   },
@@ -118,22 +121,24 @@ export default {
     toggleTabs(tabNumber) {
       this.openTab = tabNumber;
     },
-  },
-  computed: {
-    searchContact: function() {
-      return this.contacts.filter((contact) => {
-        return contact.title.toUpperCase().toLowerCase().match(this.search);
-      });
+    handleContact(a) {
+      console.log(a.title , a.date);
     },
   },
-  async mounted() {
-    await axios.get(apiContacts).then((response) => {
-      this.contacts = response.data.data;
-    });
-    await axios.get(apiConversations).then((response) => {
-      console.log(response.data);
-      this.messages = response.data;
-    });
+  computed: {
+
+    contacts() {
+      return this.$store.getters['contacts/getContacts']
+    }
+
+    // searchContact: function () {
+    //   return this.contacts.filter((contact) => {
+    //     return contact.title.toUpperCase().toLowerCase().match(this.search);
+    //   });
+    // },
   },
+  created() {
+      this.$store.dispatch('contacts/loadContacts')
+  }
 };
 </script>

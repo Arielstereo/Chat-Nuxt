@@ -64,8 +64,13 @@
       >
         <div class="px-4 py-5 flex-auto">
           <div class="tab-content tab-space">
-            <div v-bind:class="{ hidden: openTab !== 1, block: openTab === 1 }">
-              <p>messages</p>
+            <div
+              v-for="(message, index) in messages"
+              :key="index"
+              v-bind:class="{ hidden: openTab !== 1, block: openTab === 1 }"
+            >
+              <p>{{ message.users[0] }}</p>
+              <p>{{ message.lastMessageTime }}</p>
             </div>
             <div
               class="mx-2"
@@ -93,8 +98,9 @@
 
               <div
                 class="flex gap-4"
-                v-for="(contact, index) in contacts"
-                :key="index">
+                v-for="(contact, index) in searchContact"
+                :key="index"
+              >
                 <i class="bx bxs-user-circle bx-md" style="color: #1386d2"></i>
                 <a class="cursor-pointer" @click="handleContact(contact)">{{
                   contact.title
@@ -109,7 +115,6 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -121,24 +126,26 @@ export default {
     toggleTabs(tabNumber) {
       this.openTab = tabNumber;
     },
-    handleContact(a) {
-      console.log(a.title , a.date);
+    handleContact(contact) {
+      console.log(contact.title, contact.date);
     },
   },
   computed: {
-
     contacts() {
-      return this.$store.getters['contacts/getContacts']
-    }
-
-    // searchContact: function () {
-    //   return this.contacts.filter((contact) => {
-    //     return contact.title.toUpperCase().toLowerCase().match(this.search);
-    //   });
-    // },
+      return this.$store.getters["contacts/getContacts"];
+    },
+    messages() {
+      return this.$store.getters["messages/getMessages"];
+    },
+    searchContact() {
+      return this.contacts.filter((contact) => {
+        return contact.title.toLowerCase().includes(this.search);
+      });
+    },
   },
   created() {
-      this.$store.dispatch('contacts/loadContacts')
-  }
+    this.$store.dispatch("contacts/loadContacts");
+    this.$store.dispatch("messages/loadMessages");
+  },
 };
 </script>

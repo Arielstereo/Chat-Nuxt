@@ -18,7 +18,7 @@
         >
           <i class="bx bxs-user-circle bx-md px-4" style="color: #000"></i>
           <div class="flex flex-col">
-            <h1>contacts.title</h1>
+            <h1>contact.title</h1>
             <span> contact.date </span>
           </div>
         </div>
@@ -33,8 +33,8 @@
             p-2
             text-blue-50
           "
-          v-for="message in messages"
-          :key="message.id"
+          v-for="(message, index) in messages"
+          :key="index"
         >
           <div class="flex flex-row-reverse md:contents">
             <div
@@ -50,16 +50,16 @@
             >
               <div class="flex gap-2 justify-between">
                 <h3 class="font-semibold text-lg">contact/user</h3>
-              <p class="leading-tight text-white">
-                {{ message.messages[0].time}}
-              </p>
+                <p class="leading-tight text-white">
+                  {{ message.messages[0].time }}
+                </p>
               </div>
-                <span class="px-2"> {{ message.messages[0].text}}</span>
+              <span class="px-2"> {{ message.messages[0].text }}</span>
             </div>
           </div>
         </div>
       </div>
-      <Tabs class="mt-20" />
+      <Tabs class="mt-2" />
     </div>
 
     <div class="absolute bottom-0 w-full">
@@ -68,7 +68,6 @@
           <input
             class="w-3/4 h-14 m-8 p-6 rounded-3xl border-2 focus:bg-gray-100"
             placeholder="Say something.."
-            v-model="text"            
           />
 
           <button class="rounded-full bg-blue-400 p-2">
@@ -80,22 +79,18 @@
   </div>
 </template>
 <script>
-import axios from "axios";
-
-const apiConversations = process.env.apiConversations;
-
 export default {
-  data() {
-    return {
-      contacts: [],
-      messages: [],
-    };
+  computed: {
+    messages() {
+      return this.$store.getters["messages/getMessages"];
+    },
+     contacts() {
+      return this.$store.getters["contacts/getContacts"];
+    },
   },
-  async mounted() {
-   
-    await axios.get(apiConversations).then((response) => {
-      this.messages = response.data.data;
-    });
+  created() {
+    this.$store.dispatch("messages/loadMessages");
+    this.$store.dispatch("contacts/loadContacts");
   },
 };
 </script>

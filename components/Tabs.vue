@@ -16,10 +16,10 @@
               leading-normal
               cursor-pointer
             "
-            v-on:click="toggleTabs(1)"
-            v-bind:class="{
-              'text-blue-600 bg-white': openTab !== 1,
-              'text-white bg-blue-600': openTab === 1,
+            @click="toggleTabs(2)"
+            :class="{
+              'text-blue-600 bg-white': openTab !== 2,
+              'text-white bg-blue-600': openTab === 2,
             }"
           >
             Messages
@@ -39,10 +39,10 @@
               leading-normal
               cursor-pointer
             "
-            v-on:click="toggleTabs(2)"
-            v-bind:class="{
-              'text-blue-600 bg-white': openTab !== 2,
-              'text-white bg-blue-600': openTab === 2,
+            @click="toggleTabs(1)"
+            :class="{
+              'text-blue-600 bg-white': openTab !== 1,
+              'text-white bg-blue-600': openTab === 1,
             }"
           >
             Contacts
@@ -63,18 +63,25 @@
         "
       >
         <div class="px-4 py-5 flex-auto">
-          <div class="tab-content tab-space">
+          <div class="flex flex-col gap-4">
             <div
-              v-for="(message, index) in messages"
+              v-for="(receiver, index) in getReceivers"
               :key="index"
-              v-bind:class="{ hidden: openTab !== 1, block: openTab === 1 }"
+              @click="handleReceiver(receiver)"
+              class="flex gap-4 cursor-pointer"
+              :class="{ hidden: openTab !== 2, block: openTab === 2 }"
             >
-              <p>{{ message.users[0] }}</p>
-              <p>{{ message.lastMessageTime }}</p>
+              <div>
+                <i class="bx bxs-user-circle bx-lg" style="color: #1386d2"></i>
+              </div>
+              <div class="flex flex-col">
+                <a>{{ receiver.title }}</a>
+                <span> {{ receiver.lastMessageTime }}</span>
+              </div>
             </div>
             <div
               class="mx-2"
-              v-bind:class="{ hidden: openTab !== 2, block: openTab === 2 }"
+              :class="{ hidden: openTab !== 1, block: openTab === 1 }"
             >
               <div>
                 <form class="flex items-center">
@@ -97,11 +104,11 @@
               </div>
 
               <div
-                class="flex gap-4"
+                class="flex gap-6 py-1"
                 v-for="(contact, index) in searchContact"
                 :key="index"
               >
-                <i class="bx bxs-user-circle bx-md" style="color: #1386d2"></i>
+                <img class="h-10 w-10 rounded-full" :src="contact.img" />
                 <a class="cursor-pointer" @click="handleContact(contact)">{{
                   contact.title
                 }}</a>
@@ -126,16 +133,45 @@ export default {
     toggleTabs(tabNumber) {
       this.openTab = tabNumber;
     },
+    handleMessage(contact) {
+      this.$store.dispatch("messages/addReceiver", contact);
+    },
+    handleReceiver(contact) {
+      this.$store.dispatch("messages/setSelectedReceiver", contact);
+      this.$router.push({ name: "conversations" });
+    },
     handleContact(contact) {
-      console.log(contact.title, contact.date);
+      this.$store.dispatch("contacts/setSelectedContact", contact);
+      this.$router.push({ name: "index" });
     },
   },
   computed: {
+    messages() {
+      return this.$store.getters["messages/getMessages"];
+    },
     contacts() {
       return this.$store.getters["contacts/getContacts"];
     },
-    messages() {
-      return this.$store.getters["messages/getMessages"];
+    getReceivers() {
+      let selectedSender = this.$store.getters["messages/getSelectedSender"];
+
+      let result = [];
+      for (let i = 0; i < selectedSender.receivers.length; i++) {
+        console.log("receiverId is ", selectedSender.receivers[i].id);
+        for (let j = 0; j < this.contacts.length; j++) {
+          console.log("this.contacts[j].id is ", this.contacts[j].id);
+          if (this.contacts[j].id === selectedSender.receivers[i].id) {
+            result.push({
+              id: this.contacts[j].id,
+              lastSeenDate: this.contacts[j].date,
+              title: this.contacts[j].title,
+              lastMessageTime: selectedSender.receivers[i].lastMessageTime,
+            });
+          }
+        }
+      }
+
+      return result;
     },
     searchContact() {
       return this.contacts.filter((contact) => {
@@ -146,6 +182,7 @@ export default {
   created() {
     this.$store.dispatch("contacts/loadContacts");
     this.$store.dispatch("messages/loadMessages");
+    this.$store.dispatch("messages/setInitialSender");
   },
 };
 </script>

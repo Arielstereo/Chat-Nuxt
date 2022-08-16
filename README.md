@@ -1,5 +1,7 @@
 # chat-nuxt
 
+![image](static/Screenshot.png)
+
 ## Setup
 
 ```bash
